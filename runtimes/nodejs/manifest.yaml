@@ -1,7 +1,7 @@
 project:
   namespace: _
   packages:
-    push-notificiations:
+    push-notifications:
       actions:
         send-message:
           function: actions/send-message.js
