@@ -23,7 +23,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 @RunWith(classOf[JUnitRunner])
-class PushNotificationsTests
+class CredentialsIBMPushTests
     extends TestHelpers
     with WskTestHelpers{
   implicit val wskprops = WskProps()
