@@ -1,0 +1,8 @@
+project:
+  namespace: _
+  packages:
+    push-notificiations:
+      actions:
+        send-message:
+          function: actions/send-message.js
+          runtime: nodejs:8
