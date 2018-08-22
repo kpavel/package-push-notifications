@@ -1,6 +1,6 @@
 include 'tests'
 
-rootProject.name = 'package-push-noticications'
+rootProject.name = 'package-push-notifications'
 
 gradle.ext.openwhisk = [
     version: '1.0.0-SNAPSHOT'
