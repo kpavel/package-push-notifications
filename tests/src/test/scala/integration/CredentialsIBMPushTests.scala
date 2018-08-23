@@ -27,8 +27,6 @@ class CredentialsIBMPushTests
     extends PushNotificationsPackage
     with TestHelpers
     with WskTestHelpers{
-  implicit val wskprops = WskProps()
-  val wsk = new Wsk()
   val credentials = TestUtils.getVCAPcredentials("imfpush")
   val appSecret = credentials.get("appSecret").toJson;
   val credentialsUrl = credentials.get("url");
