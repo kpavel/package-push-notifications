@@ -18,7 +18,7 @@
 package packages
 
 import org.scalatest.BeforeAndAfterAll
-import common.{TestHelpers, WskActorSystem, WskTestHelpers}
+import common.{TestHelpers, Wsk, WskActorSystem, WskProps, WskTestHelpers}
 import common.rest.WskRestOperations
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.config.SSLConfig
