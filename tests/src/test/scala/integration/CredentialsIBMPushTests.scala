@@ -16,7 +16,7 @@
  */
 package packages
 
-import common.{TestHelpers, Wsk, WskProps, WskTestHelpers, _}
+import common.{TestHelpers, WskTestHelpers, _}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import spray.json.DefaultJsonProtocol._
