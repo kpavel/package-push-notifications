@@ -77,6 +77,7 @@ class PushNotificationsPackage
   def deleteNodeJS8 = {
     // delete unique asset names
     wsk.action.delete(actionSendMessage)
+    wsk.action.delete(actionWebhook)
     wsk.pkg.delete(packageName)
   }
 
