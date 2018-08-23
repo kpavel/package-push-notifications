@@ -24,7 +24,8 @@ import spray.json._
 
 @RunWith(classOf[JUnitRunner])
 class CredentialsIBMPushTests
-    extends TestHelpers
+    extends PushNotificationsPackage
+    with TestHelpers
     with WskTestHelpers{
   implicit val wskprops = WskProps()
   val wsk = new Wsk()
@@ -41,6 +42,10 @@ class CredentialsIBMPushTests
   val accentMessage = "Máxima de 33 C and Mínima de 26 C".toJson;
 
   behavior of "Push Package"
+
+    it should "Deploy nodejs8 push-notificiations package and actions" in {
+      deployNodeJS8
+    }
 
     it should "Send Notification action" in {
            val name = "push-notifications/send-message"
@@ -96,5 +101,9 @@ class CredentialsIBMPushTests
         withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "apiHost"-> "mobile.bad.host".toJson))){
             _.response.success shouldBe false
         }
+    }
+
+    it should "Delete nodejs8 push-notifications package and actions" in {
+      deleteNodeJS8
     }
 }
