@@ -56,6 +56,7 @@ class PushNotificationsPackage
 
   //action definitions
   val actionSendMessage = packageName + "/send-message"
+  val actionWebhook = packageName + "/webhook"
 
 
   behavior of "Push Notificiations Package"
