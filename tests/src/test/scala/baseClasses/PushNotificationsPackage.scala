@@ -56,6 +56,7 @@ class PushNotificationsPackage
 
   //action definitions
   val actionSendMessage = packageName + "/send-message"
+  val actionWebhook = packageName + "/webhook"
 
 
   behavior of "Push Notificiations Package"
@@ -76,6 +77,7 @@ class PushNotificationsPackage
   def deleteNodeJS8 = {
     // delete unique asset names
     wsk.action.delete(actionSendMessage)
+    wsk.action.delete(actionWebhook)
     wsk.pkg.delete(packageName)
   }
 

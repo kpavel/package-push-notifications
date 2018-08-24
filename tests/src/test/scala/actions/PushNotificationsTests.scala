@@ -42,6 +42,11 @@ class PushNotificationTests
       wsk.action.get(actionSendMessage)
     verifyAction(testActionSendMessage, actionSendMessage, JsString(nodejs8kind))
 
+    // ensure actions exist and are of expected kind
+    val testActionWebhook =
+      wsk.action.get(actionWebhook)
+    verifyAction(testActionWebhook, actionWebhook, JsString(nodejs8kind))
+
     // clean up after test
     deleteNodeJS8
   }

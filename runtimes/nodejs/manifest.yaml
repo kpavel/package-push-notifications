@@ -6,3 +6,6 @@ project:
         send-message:
           function: actions/send-message.js
           runtime: nodejs:8
+        webhook:
+          function: actions/webhook.js
+          runtime: nodejs:8
