@@ -97,82 +97,55 @@ function main(params) {
   }
 
   const appId = params.appGuid || params.appId;
-  const appSecret = params.appSecret;
+  const { appSecret } = params;
 
   // message section settings
-  const messageUrl = params.url;
-  const messageText = params.text;
+  const { messageUrl, messageText } = params;
 
   // target section settings -- each param should be an array of string
-  const targetDeviceIds = params.deviceIds;
-  const targetPlatforms = params.platforms;
-  const targetTagNames = params.tagNames;
-  const targetUserIds = params.userIds;
+  const {
+    targetDeviceIds, targetPlatforms, targetTagNames, targetUserIds,
+  } = params;
 
   // apns settings
-  const apnsBadge = params.apnsBadge; // should be an int
-  const apnsCategory = params.apnsCategory;
-  const apnsActionKeyTitle = params.apnsIosActionKey;
-  const apnsSound = params.apnsSound;
-  const apnsPayload = params.apnsPayload;
-  const apnsType = params.apnsType;
-  const apnsTitleLocKey = params.apnsTitleLocKey;
-  const apnsLocKey = params.apnsLocKey;
-  const apnsLaunchImage = params.apnsLaunchImage;
-  const apnsTitleLocArgs = params.apnsTitleLocArgs;
-  const apnsLocArgs = params.apnsLocArgs;
-  const apnstitle = params.apnstitle;
-  const apnsSubtitle = params.apnsSubtitle;
-  const apnsAttachmentUrl = params.apnsAttachmentUrl;
+  const {
+    apnsBadge, apnsCategory, apnsActionKeyTitle, apnsSound, apnsPayload, apnsType, apnsTitleLocKey,
+    apnsLocKey, apnsLaunchImage, apnsTitleLocArgs, apnsLocArgs, apnstitle, apnsSubtitle,
+    apnsAttachmentUrl,
+  } = params;
 
   // gcm settings
-  const gcmCollapseKey = params.gcmCollapseKey;
-  const gcmDelayWhileIdle = params.gcmDelayWhileIdle;
-  const gcmPayload = params.gcmPayload;
-  const gcmPriority = params.gcmPriority;
-  const gcmSound = params.gcmSound;
-  const gcmTimeToLive = params.gcmTimeToLive;
-  const gcmSync = params.gcmSync;
-  const gcmVisibility = params.gcmVisibility;
-  const gcmCategory = params.gcmCategory;
-  const gcmIcon = params.gcmIcon;
+  const {
+    gcmCollapseKey, gcmDelayWhileIdle, gcmPayload, gcmPriority, gcmSound, gcmTimeToLive,
+    gcmSync, gcmVisibility, gcmCategory, gcmIcon,
+  } = params;
 
-  //GCM Style settings
-  const gcmStyleType = params.gcmStyleType;
-  const gcmStyleTitle = params.gcmStyleTitle;
-  const gcmStyleUrl = params.gcmStyleUrl;
-  const gcmStyleText = params.gcmStyleText;
-  const gcmStyleLines = params.gcmStyleLines;
+  // GCM Style settings
+  const {
+    gcmStyleType, gcmStyleTitle, gcmStyleUrl, gcmStyleText, gcmStyleLines,
+  } = params;
 
-  //GCM Light settings
-  const gcmLightsLedArgb = params.gcmLightsLedArgb;
-  const gcmLightsLedOnMs = params.gcmLightsLedOnMs;
-  const gcmLightsLedOffMs = params.gcmLightsLedOffMs;
+  // GCM Light settings
+  const { gcmLightsLedArgb, gcmLightsLedOnMs, gcmLightsLedOffMs } = params;
 
-  //Firefox web settings
-  const fireFoxTitle = params.fireFoxTitle;
-  const fireFoxIconUrl = params.fireFoxIconUrl;
-  const fireFoxTimeToLive = params.fireFoxTimeToLive;
-  const fireFoxPayload = params.fireFoxPayload;
+  // Firefox web settings
+  const {
+    fireFoxTitle, fireFoxIconUrl, fireFoxTimeToLive, fireFoxPayload,
+  } = params;
 
-  //Chrome web settings
-  const chromeTitle = params.chromeTitle;
-  const chromeIconUrl = params.chromeIconUrl;
-  const chromeTimeToLive = params.chromeTimeToLive;
-  const chromePayload = params.chromePayload;
+  // Chrome web settings
+  const {
+    chromeTitle, chromeIconUrl, chromeTimeToLive, chromePayload,
+  } = params;
 
-  //Safari web settings
-  const safariTitle = params.safariTitle;
-  const safariUrlArgs = params.safariUrlArgs;
-  const safariAction = params.safariAction;
+  // Safari web settings
+  const { safariTitle, safariUrlArgs, safariAction } = params;
 
-  //Chrome Apps & Extensions web settings
-  const chromeAppExtTitle = params.chromeAppExtTitle;
-  const chromeAppExtCollapseKey = params.chromeAppExtCollapseKey;
-  const chromeAppExtDelayWhileIdle = params.chromeAppExtDelayWhileIdle;
-  const chromeAppExtIconUrl = params.chromeAppExtIconUrl;
-  const chromeAppExtTimeToLive = params.chromeAppExtTimeToLive;
-  const chromeAppExtPayload = params.chromeAppExtPayload;
+  // Chrome Apps & Extensions web settings
+  const {
+    chromeAppExtTitle, chromeAppExtCollapseKey, chromeAppExtDelayWhileIdle,
+    chromeAppExtIconUrl, chromeAppExtTimeToLive, chromeAppExtPayload,
+  } = params;
 
   const sendMessage = {};
 
