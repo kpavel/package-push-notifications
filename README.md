@@ -3,47 +3,47 @@
 [![Build Status](https://travis-ci.org/ibm-functions/package-push-notifications.svg?branch=master)](https://travis-ci.org/ibm-functions/package-push-notifications)
 
 ### Overview
-This repository allows you to deploy a Push Notifications Package for IBM Functions.
-The package contains a set of simple functions to get your started composing IBM Functions Applications.
+This repository allows you to deploy a Push Notifications package for IBM Cloud Functions.
+The package contains a set of simple functions to get you started composing Cloud Functions applications.
 
-### Available Languages
+### Available languages
 This package is available in Node.js 8.
 
 # Deploy Push Notifications Package with IBM Cloud Command Line Interface (CLI)
 
 ## Configure CLI
 - Make sure to execute `bx login` if not already logged in
-- Install IBM Functions CLI plugin
+1. Install the Cloud Functions CLI plugin.
 ```
-bx plugin install cloud-functions
+ibmcloud plugin install cloud-functions
 ```
-Make sure you are authenticated with IBM Functions and can list entities without errors
+2. Make sure you are authenticated with Cloud Functions and can list entities without errors.
 ```
-bx wsk list
+ibmcloud fn list
 ```
+3. Download the [wskdeploy](https://github.com/apache/incubator-openwhisk-wskdeploy/releases) utility and add `wskdeploy` to your PATH.
+
 ## Deploy
 
-Use `wskdeploy` to deploy using [`manifest.yml`](./manifest.yml).
+Use `wskdeploy` to deploy the package using [`manifest.yml`](./manifest.yml).
 ```
 pushd runtimes/nodejs/
 wskdeploy
 popd
 ```
 
-This will create a new package `push-notifications` with the following actions:
+This creates a new package `push-notifications` with the following actions:
 - push-notifications/send-message
 - push-notifications/webhooks
 
 **Future**
- The utility `wskdeploy` will be integrated into a new `wsk` plugin command `bx wsk deploy`.
-For now download from here [wskdeploy download](https://github.com/apache/incubator-openwhisk-wskdeploy/releases) and add `wskdeploy` to your PATH
+</br>The utility `wskdeploy` will be integrated into a new Cloud Functions CLI plugin command `ibmcloud fn deploy`.
 
 ## Bind service credentials
-You will need to bind your Push Notifications service to the `push-notifications` package, so that the Actions will have access to the service credentials.
+Bind your Push Notifications service instance to the `push-notifications` package. This gives actions in the package access to the Push Notifications service credentials.
 ```
-bx wsk service bind imfpush push-notifications
+ibmcloud fn service bind imfpush push-notifications
 ```
-
 
 ## Test
 TODO
