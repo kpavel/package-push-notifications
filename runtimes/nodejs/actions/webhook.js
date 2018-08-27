@@ -54,14 +54,14 @@ function main(params) {
         'Content-Type': 'application/json',
       },
     };
-    const promise = new Promise(((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       request(options, (error, response, body) => {
         if (error) {
           reject(error);
         }
         resolve({ response: body });
       });
-    }));
+    });
     return promise;
   } if (lifecycleEvent === 'DELETE') {
     const options = {
@@ -71,14 +71,14 @@ function main(params) {
         appSecret,
       },
     };
-    const promise = new Promise(((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       request(options, (error, response, body) => {
         if (error) {
           reject(error);
         }
         resolve({ response: body });
       });
-    }));
+    });
     return promise;
   }
 }
