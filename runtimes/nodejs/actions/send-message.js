@@ -86,9 +86,9 @@
 */
 module.paths.push('/usr/lib/node_modules');
 const url = require('url');
+const request = require('request');
 
 function main(params) {
-
   if (!params.appId && !params.appGuid) {
     return Promise.reject('appId / appGUID of the application is required.');
   }
@@ -186,7 +186,7 @@ function main(params) {
   }
 
   // create apns settings section
-  var apns = {};
+  const apns = {};
   if (apnsBadge) {
     apns.badge = apnsBadge;
   }
@@ -399,7 +399,6 @@ function main(params) {
   }
 
   const bodyData = JSON.stringify(sendMessage);
-  const request = require('request');
   let apiHost;
   if (params.apiHost) {
     apiHost = params.apiHost;
