@@ -85,8 +85,7 @@
 *  @return {object} whisk async.
 */
 module.paths.push('/usr/lib/node_modules');
-var https = require('https');
-var url = require('url');
+const url = require('url');
 
 function main(params) {
 
@@ -97,88 +96,88 @@ function main(params) {
     return Promise.reject('appSecret of the application is required.');
   }
 
-  var appId = params.appGuid || params.appId;
-  var appSecret = params.appSecret;
+  const appId = params.appGuid || params.appId;
+  const appSecret = params.appSecret;
 
   // message section settings
-  var messageUrl = params.url;
-  var messageText = params.text;
+  const messageUrl = params.url;
+  const messageText = params.text;
 
   // target section settings -- each param should be an array of string
-  var targetDeviceIds = params.deviceIds;
-  var targetPlatforms = params.platforms;
-  var targetTagNames = params.tagNames;
-  var targetUserIds = params.userIds;
+  const targetDeviceIds = params.deviceIds;
+  const targetPlatforms = params.platforms;
+  const targetTagNames = params.tagNames;
+  const targetUserIds = params.userIds;
 
   // apns settings
-  var apnsBadge = params.apnsBadge; // should be an int
-  var apnsCategory = params.apnsCategory;
-  var apnsActionKeyTitle = params.apnsIosActionKey;
-  var apnsSound = params.apnsSound;
-  var apnsPayload = params.apnsPayload;
-  var apnsType = params.apnsType;
-  var apnsTitleLocKey = params.apnsTitleLocKey;
-  var apnsLocKey = params.apnsLocKey;
-  var apnsLaunchImage = params.apnsLaunchImage;
-  var apnsTitleLocArgs = params.apnsTitleLocArgs;
-  var apnsLocArgs = params.apnsLocArgs;
-  var apnstitle = params.apnstitle;
-  var apnsSubtitle = params.apnsSubtitle;
-  var apnsAttachmentUrl = params.apnsAttachmentUrl;
+  const apnsBadge = params.apnsBadge; // should be an int
+  const apnsCategory = params.apnsCategory;
+  const apnsActionKeyTitle = params.apnsIosActionKey;
+  const apnsSound = params.apnsSound;
+  const apnsPayload = params.apnsPayload;
+  const apnsType = params.apnsType;
+  const apnsTitleLocKey = params.apnsTitleLocKey;
+  const apnsLocKey = params.apnsLocKey;
+  const apnsLaunchImage = params.apnsLaunchImage;
+  const apnsTitleLocArgs = params.apnsTitleLocArgs;
+  const apnsLocArgs = params.apnsLocArgs;
+  const apnstitle = params.apnstitle;
+  const apnsSubtitle = params.apnsSubtitle;
+  const apnsAttachmentUrl = params.apnsAttachmentUrl;
 
   // gcm settings
-  var gcmCollapseKey = params.gcmCollapseKey;
-  var gcmDelayWhileIdle = params.gcmDelayWhileIdle;
-  var gcmPayload = params.gcmPayload;
-  var gcmPriority = params.gcmPriority;
-  var gcmSound = params.gcmSound;
-  var gcmTimeToLive = params.gcmTimeToLive;
-  var gcmSync = params.gcmSync;
-  var gcmVisibility = params.gcmVisibility;
-  var gcmCategory = params.gcmCategory;
-  var gcmIcon = params.gcmIcon;
+  const gcmCollapseKey = params.gcmCollapseKey;
+  const gcmDelayWhileIdle = params.gcmDelayWhileIdle;
+  const gcmPayload = params.gcmPayload;
+  const gcmPriority = params.gcmPriority;
+  const gcmSound = params.gcmSound;
+  const gcmTimeToLive = params.gcmTimeToLive;
+  const gcmSync = params.gcmSync;
+  const gcmVisibility = params.gcmVisibility;
+  const gcmCategory = params.gcmCategory;
+  const gcmIcon = params.gcmIcon;
 
   //GCM Style settings
-  var gcmStyleType = params.gcmStyleType;
-  var gcmStyleTitle = params.gcmStyleTitle;
-  var gcmStyleUrl = params.gcmStyleUrl;
-  var gcmStyleText = params.gcmStyleText;
-  var gcmStyleLines = params.gcmStyleLines;
+  const gcmStyleType = params.gcmStyleType;
+  const gcmStyleTitle = params.gcmStyleTitle;
+  const gcmStyleUrl = params.gcmStyleUrl;
+  const gcmStyleText = params.gcmStyleText;
+  const gcmStyleLines = params.gcmStyleLines;
 
   //GCM Light settings
-  var gcmLightsLedArgb = params.gcmLightsLedArgb;
-  var gcmLightsLedOnMs = params.gcmLightsLedOnMs;
-  var gcmLightsLedOffMs = params.gcmLightsLedOffMs;
+  const gcmLightsLedArgb = params.gcmLightsLedArgb;
+  const gcmLightsLedOnMs = params.gcmLightsLedOnMs;
+  const gcmLightsLedOffMs = params.gcmLightsLedOffMs;
 
   //Firefox web settings
-  var fireFoxTitle = params.fireFoxTitle;
-  var fireFoxIconUrl = params.fireFoxIconUrl;
-  var fireFoxTimeToLive = params.fireFoxTimeToLive;
-  var fireFoxPayload = params.fireFoxPayload;
+  const fireFoxTitle = params.fireFoxTitle;
+  const fireFoxIconUrl = params.fireFoxIconUrl;
+  const fireFoxTimeToLive = params.fireFoxTimeToLive;
+  const fireFoxPayload = params.fireFoxPayload;
 
   //Chrome web settings
-  var chromeTitle = params.chromeTitle;
-  var chromeIconUrl = params.chromeIconUrl;
-  var chromeTimeToLive = params.chromeTimeToLive;
-  var chromePayload = params.chromePayload;
+  const chromeTitle = params.chromeTitle;
+  const chromeIconUrl = params.chromeIconUrl;
+  const chromeTimeToLive = params.chromeTimeToLive;
+  const chromePayload = params.chromePayload;
 
   //Safari web settings
-  var safariTitle = params.safariTitle;
-  var safariUrlArgs = params.safariUrlArgs;
-  var safariAction = params.safariAction;
+  const safariTitle = params.safariTitle;
+  const safariUrlArgs = params.safariUrlArgs;
+  const safariAction = params.safariAction;
 
   //Chrome Apps & Extensions web settings
-  var chromeAppExtTitle = params.chromeAppExtTitle;
-  var chromeAppExtCollapseKey = params.chromeAppExtCollapseKey;
-  var chromeAppExtDelayWhileIdle = params.chromeAppExtDelayWhileIdle;
-  var chromeAppExtIconUrl = params.chromeAppExtIconUrl;
-  var chromeAppExtTimeToLive = params.chromeAppExtTimeToLive;
-  var chromeAppExtPayload = params.chromeAppExtPayload;
+  const chromeAppExtTitle = params.chromeAppExtTitle;
+  const chromeAppExtCollapseKey = params.chromeAppExtCollapseKey;
+  const chromeAppExtDelayWhileIdle = params.chromeAppExtDelayWhileIdle;
+  const chromeAppExtIconUrl = params.chromeAppExtIconUrl;
+  const chromeAppExtTimeToLive = params.chromeAppExtTimeToLive;
+  const chromeAppExtPayload = params.chromeAppExtPayload;
 
-  var sendMessage = {};
+  const sendMessage = {};
 
   // create message section
-  var message = {};
+  const message = {};
   if (messageText) {
     message.alert = messageText;
   }
@@ -188,12 +187,12 @@ function main(params) {
 
   if (isEmpty(message)) {
     return Promise.reject("No message to send");
-  } else {
-    sendMessage.message = message;
   }
+  sendMessage.message = message;
+
 
   // create target section
-  var target = {};
+  const target = {};
   if (targetDeviceIds) {
     target.deviceIds = targetDeviceIds;
   }
@@ -264,7 +263,7 @@ function main(params) {
   }
 
   // create gcm settings section
-  var gcm = {};
+  const gcm = {};
   if (gcmCollapseKey) {
     gcm.collapseKey = gcmCollapseKey;
   }
@@ -296,8 +295,8 @@ function main(params) {
     gcm.icon = gcmIcon;
   }
 
-  var gcmStyle = {};
-  if(gcmStyleType){
+  const gcmStyle = {};
+  if (gcmStyleType) {
     gcmStyle.type = gcmStyleType;
   }
   if (gcmStyleTitle) {
@@ -316,8 +315,8 @@ function main(params) {
     gcm.style = gcmStyle;
   }
 
-  var gcmLights = {};
-  if(gcmLightsLedArgb){
+  const gcmLights = {};
+  if (gcmLightsLedArgb) {
     gcmLights.ledArgb = gcmLightsLedArgb;
   }
   if (gcmLightsLedOnMs) {
@@ -338,8 +337,8 @@ function main(params) {
   }
 
   // create FireFox settings section
-  var firefoxWeb = {};
-  if (fireFoxTitle){
+  const firefoxWeb = {};
+  if (fireFoxTitle) {
     firefoxWeb.title = fireFoxTitle;
   }
   if (fireFoxIconUrl) {
@@ -360,8 +359,8 @@ function main(params) {
   }
 
   // create Safari settings section
-  var safariWeb = {};
-  if (safariTitle){
+  const safariWeb = {};
+  if (safariTitle) {
     safariWeb.title = safariTitle;
   }
   if (safariUrlArgs) {
@@ -378,8 +377,8 @@ function main(params) {
   }
 
   // create Chrome settings section
-  var chromeWeb = {};
-  if (chromeTitle){
+  const chromeWeb = {};
+  if (chromeTitle) {
     chromeWeb.title = chromeTitle;
   }
   if (chromeIconUrl) {
@@ -400,8 +399,8 @@ function main(params) {
   }
 
   // create Chrome Apps & Extensions settings section
-  var chromeAppExt = {};
-  if (chromeAppExtTitle){
+  const chromeAppExt = {};
+  if (chromeAppExtTitle) {
     chromeAppExt.title = chromeAppExtTitle;
   }
   if (chromeAppExtCollapseKey) {
@@ -426,35 +425,34 @@ function main(params) {
     sendMessage.settings.chromeAppExt = chromeAppExt;
   }
 
-  var bodyData = JSON.stringify(sendMessage);
-  var request = require('request');
-  var apiHost;
+  const bodyData = JSON.stringify(sendMessage);
+  const request = require('request');
+  let apiHost;
   if (params.apiHost) {
     apiHost = params.apiHost;
   }
   else if (params.admin_url) {
-    var adminURL = url.parse(params.admin_url).protocol === null ? `https:${params.admin_url}` : params.admin_url;
+    const adminURL = url.parse(params.admin_url).protocol === null ? `https:${params.admin_url}` : params.admin_url;
     apiHost = url.parse(adminURL).host;
-  }
-  else {
+  } else {
     apiHost = 'mobile.ng.bluemix.net';
   }
 
-  var promise = new Promise(function (resolve, reject) {
+  const promise = new Promise((resolve, reject) => {
     request({
       method: 'post',
       uri: `https://${apiHost}/imfpush/v1/apps/${appId}/messages`,
       headers: {
-        'appSecret': appSecret,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        appSecret,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      body: bodyData
-    }, function (error, response, body) {
+      body: bodyData,
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
-      var j = JSON.parse(body);
+      const j = JSON.parse(body);
       resolve(j);
     });
   });
@@ -468,6 +466,5 @@ function isEmpty(obj) {
   for (var key in obj) {
     if (hasOwnProperty.call(obj, key)) return false;
   }
-
   return true;
 }
