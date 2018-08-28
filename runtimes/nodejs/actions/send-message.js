@@ -94,9 +94,6 @@ function main(params) {
   if (!theParams.appId && !theParams.appGuid) {
     return Promise.reject('appId / appGUID of the application is required.');
   }
-  if (!theParams.appSecret) {
-    return Promise.reject('appSecret of the application is required.');
-  }
 
   const appId = theParams.appGuid || theParams.appId;
   const { appSecret } = theParams;
