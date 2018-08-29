@@ -63,7 +63,6 @@ class CredentialsIAMPushTests
     }
 
     it should "Send Notification action" in {
-      System.print("BX_CREDS", __bx_creds)
            val name = "push-notifications/send-message"
              withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> messageText, "__bx_creds" -> __bx_creds))){
                  _.response.result.get.toString should include ("message")
