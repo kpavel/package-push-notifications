@@ -23,7 +23,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 @RunWith(classOf[JUnitRunner])
-class CredentialsIBMPushTests
+class CredentialsCFPushTests
     extends PushNotificationsPackage
     with TestHelpers
     with WskTestHelpers{
@@ -39,7 +39,7 @@ class CredentialsIBMPushTests
   val unicodeMessage = "\ue04a".toJson;
   val accentMessage = "Máxima de 33 C and Mínima de 26 C".toJson;
 
-  behavior of "Push Package"
+  behavior of "Push Package with CF style Credentials"
 
     it should "Deploy nodejs8 push-notificiations package and actions" in {
       deployNodeJS8
