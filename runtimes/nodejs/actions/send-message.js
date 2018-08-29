@@ -89,62 +89,63 @@ const url = require('url');
 const request = require('request');
 
 function main(params) {
-  const theParams = getParams(params);
-
-  if (!theParams.appId && !theParams.appGuid) {
+  if (!params.appId && !params.appGuid) {
     return Promise.reject('appId / appGUID of the application is required.');
   }
+  if (!params.appSecret) {
+    return Promise.reject('appSecret of the application is required.');
+  }
 
-  const appId = theParams.appGuid || theParams.appId;
-  const { appSecret } = theParams;
+  const appId = params.appGuid || params.appId;
+  const { appSecret } = params;
 
   // message section settings
-  const { messageUrl, messageText } = theParams;
+  const { messageUrl, messageText } = params;
 
   // target section settings -- each param should be an array of string
   const {
     targetDeviceIds, targetPlatforms, targetTagNames, targetUserIds,
-  } = theParams;
+  } = params;
 
   // apns settings
   const {
     apnsBadge, apnsCategory, apnsActionKeyTitle, apnsSound, apnsPayload, apnsType, apnsTitleLocKey,
     apnsLocKey, apnsLaunchImage, apnsTitleLocArgs, apnsLocArgs, apnstitle, apnsSubtitle,
     apnsAttachmentUrl,
-  } = theParams;
+  } = params;
 
   // gcm settings
   const {
     gcmCollapseKey, gcmDelayWhileIdle, gcmPayload, gcmPriority, gcmSound, gcmTimeToLive,
     gcmSync, gcmVisibility, gcmCategory, gcmIcon,
-  } = theParams;
+  } = params;
 
   // GCM Style settings
   const {
     gcmStyleType, gcmStyleTitle, gcmStyleUrl, gcmStyleText, gcmStyleLines,
-  } = theParams;
+  } = params;
 
   // GCM Light settings
-  const { gcmLightsLedArgb, gcmLightsLedOnMs, gcmLightsLedOffMs } = theParams;
+  const { gcmLightsLedArgb, gcmLightsLedOnMs, gcmLightsLedOffMs } = params;
 
   // Firefox web settings
   const {
     fireFoxTitle, fireFoxIconUrl, fireFoxTimeToLive, fireFoxPayload,
-  } = theParams;
+  } = params;
 
   // Chrome web settings
   const {
     chromeTitle, chromeIconUrl, chromeTimeToLive, chromePayload,
-  } = theParams;
+  } = params;
 
   // Safari web settings
-  const { safariTitle, safariUrlArgs, safariAction } = theParams;
+  const { safariTitle, safariUrlArgs, safariAction } = params;
 
   // Chrome Apps & Extensions web settings
   const {
     chromeAppExtTitle, chromeAppExtCollapseKey, chromeAppExtDelayWhileIdle,
     chromeAppExtIconUrl, chromeAppExtTimeToLive, chromeAppExtPayload,
-  } = theParams;
+  } = params;
 
   const sendMessage = {};
 
@@ -399,11 +400,11 @@ function main(params) {
 
   const bodyData = JSON.stringify(sendMessage);
   let apiHost;
-  if (theParams.apiHost) {
-    apiHost = theParams.apiHost;
+  if (params.apiHost) {
+    apiHost = params.apiHost;
   }
-  else if (theParams.admin_url) {
-    const adminURL = url.parse(theParams.admin_url).protocol === null ? `https:${theParams.admin_url}` : theParams.admin_url;
+  else if (params.admin_url) {
+    const adminURL = url.parse(params.admin_url).protocol === null ? `https:${params.admin_url}` : params.admin_url;
     apiHost = url.parse(adminURL).host;
   } else {
     apiHost = 'mobile.ng.bluemix.net';
@@ -438,24 +439,4 @@ function isEmpty(obj) {
     if (hasOwnProperty.call(obj, key)) return false;
   }
   return true;
-}
-
-/**
-* Helper function used to authenticate credentials bound to package using wsk service bind
-*
-* @param {Object} theParams - parameters sent to service
-*/
-function getParams(theParams) {
-  const service = 'imfpush';
-  if (Object.keys(theParams).length === 0) {
-    return theParams;
-  }
-  let bxCreds = {};
-  // Code that checks parameters bound using service bind
-  if (theParams.__bx_creds && theParams.__bx_creds[service]) {
-    bxCreds = theParams.__bx_creds[service];
-  }
-  const allParams = Object.assign({}, bxCreds, theParams);
-  delete allParams.__bx_creds;
-  return allParams;
 }
