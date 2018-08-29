@@ -23,7 +23,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 @RunWith(classOf[JUnitRunner])
-class CredentialsCFPushTests
+class CredentialsIBMPushTests
     extends PushNotificationsPackage
     with TestHelpers
     with WskTestHelpers{
