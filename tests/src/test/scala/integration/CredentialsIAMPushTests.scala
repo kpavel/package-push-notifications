@@ -44,7 +44,7 @@ class CredentialsIAMPushTests
   val accentMessage = "Máxima de 33 C and Mínima de 26 C".toJson;
 
   val __bx_creds = JsObject(
-   "push-notifications-iam" -> JsObject(
+   "imfpush" -> JsObject(
      "iam_role_crn" -> JsString(iam_role_crn),
      "url" -> JsString(url),
      "iam_apikey_description" -> JsString(iam_apikey_description),
@@ -82,27 +82,6 @@ class CredentialsIAMPushTests
                  _.response.result.get.toString should include ("message")
              }
     }
-
-    // it should "Send Notification action with url" in {
-    //         val name = "push-notifications/send-message"
-    //         withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> messageText, "__bx_creds" -> __bx_creds))){
-    //             _.response.result.get.toString should include ("message")
-    //          }
-    //        }
-
-    // it should "Send Notification action using admin_url" in {
-    //     val name = "push-notifications/send-message"
-    //     withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "admin_url"-> adminURL.toJson))){
-    //         _.response.result.get.toString should include ("message")
-    //     }
-    // }
-    //
-    // it should "Send Notification action using bad admin_url" in {
-    //     val name = "push-notifications/send-message"
-    //     withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "admin_url"-> "//mobile.bad.host/pathname".toJson))){
-    //         _.response.success shouldBe false
-    //     }
-    // }
 
     it should "Delete nodejs8 push-notifications package and actions" in {
       deleteNodeJS8
