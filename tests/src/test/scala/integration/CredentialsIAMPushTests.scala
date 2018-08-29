@@ -64,21 +64,21 @@ class CredentialsIAMPushTests
 
     it should "Send Notification action" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> messageText, "__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> messageText, "__bx_creds" -> __bx_creds))){
+                 _.response.result.get.toString should include ("some string")
              }
     }
 
     it should "Send Notification action with unicode message" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> unicodeMessage, "__bx_creds" -> __bx_creds))){
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> unicodeMessage, "__bx_creds" -> __bx_creds))){
                  _.response.result.get.toString should include ("message")
              }
     }
 
     it should "Send Notification action with accent message" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> accentMessage,"__bx_creds" -> __bx_creds))){
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> accentMessage,"__bx_creds" -> __bx_creds))){
                  _.response.result.get.toString should include ("message")
              }
     }
