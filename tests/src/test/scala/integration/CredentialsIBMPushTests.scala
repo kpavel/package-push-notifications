@@ -39,7 +39,7 @@ class CredentialsIBMPushTests
   val unicodeMessage = "\ue04a".toJson;
   val accentMessage = "Máxima de 33 C and Mínima de 26 C".toJson;
 
-  behavior of "Push Package"
+  behavior of "Push Package with CF style Credentials"
 
     it should "Deploy nodejs8 push-notificiations package and actions" in {
       deployNodeJS8
@@ -47,56 +47,56 @@ class CredentialsIBMPushTests
 
     it should "Send Notification action" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText))){
+                 _.response.result.get.toString should include (messageText.toString)
              }
     }
 
     it should "Send Notification action with unicode message" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> unicodeMessage))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> unicodeMessage))){
+                 _.response.result.get.toString should include (unicodeMessage.toString)
              }
     }
 
     it should "Send Notification action with accent message" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> accentMessage))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> accentMessage))){
+                 _.response.result.get.toString should include (accentMessage.toString)
              }
     }
 
     it should "Send Notification action with url" in {
             val name = "push-notifications/send-message"
-            withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "url"-> url))){
-                _.response.result.get.toString should include ("message")
+            withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "url"-> url))){
+                _.response.result.get.toString should include (messageText.toString)
              }
            }
 
     it should "Send Notification action using admin_url" in {
         val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "admin_url"-> adminURL.toJson))){
-            _.response.result.get.toString should include ("message")
+        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> adminURL.toJson))){
+            _.response.result.get.toString should include (messageText.toString)
         }
     }
 
     it should "Send Notification action using bad admin_url" in {
         val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "admin_url"-> "//mobile.bad.host/pathname".toJson))){
+        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> "//mobile.bad.host/pathname".toJson))){
             _.response.success shouldBe false
         }
     }
 
     it should "Send Notification action using apiHost" in {
         val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "apiHost"-> apiHost.toJson))){
-            _.response.result.get.toString should include ("message")
+        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> apiHost.toJson))){
+            _.response.result.get.toString should include (messageText.toString)
         }
     }
 
     it should "Send Notification action using bad apiHost" in {
         val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "text" -> messageText, "apiHost"-> "mobile.bad.host".toJson))){
+        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> "mobile.bad.host".toJson))){
             _.response.success shouldBe false
         }
     }
