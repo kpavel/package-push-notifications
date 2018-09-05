@@ -451,8 +451,14 @@ async function main(params) {
       body: { message: err },
     })
   }
-  const j = JSON.parse(sendMessageResult.body);
-  return j;
+
+  let messageResult;
+  try {
+    messageResult = JSON.parse(sendMessageResult.body);
+  } catch (e) {
+    return Promise.reject(new Error('error parsing send message result'));
+  }
+  return messageResult;
 }
 
 function isEmpty(obj) {
