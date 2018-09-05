@@ -415,7 +415,7 @@ async function main(params) {
   let pushHeaders = {};
   if (isIamAuth) {
     try {
-      header = await handleAuth(theParams)
+      header = await handleAuth(theParams.apikey)
     } catch (err) {
       return Promise.reject({
         statusCode: 500,
@@ -485,23 +485,21 @@ function getParams(theParams) {
   return allParams;
 }
 
-function handleAuth(triggerData) {
-  if (triggerData.apikey) {
-    return new Promise(((resolve, reject) => {
-      getAuthHeader(triggerData)
-        .then((header) => {
-          resolve(header);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    }));
-  }
+function handleAuth(theApiKey) {
+  return new Promise(((resolve, reject) => {
+    getAuthHeader(theApiKey)
+      .then((header) => {
+        resolve(header);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  }));
 }
 
-function getAuthHeader(triggerData) {
+function getAuthHeader(iamApiKey) {
   const tm = new iam({
-    iamApikey: triggerData.apikey,
+    iamApikey: iamApiKey,
     iamUrl: process.env.__OW_IAM_API_URL || 'https://iam.bluemix.net/identity/token',
   });
   return tm.getAuthHeader();
