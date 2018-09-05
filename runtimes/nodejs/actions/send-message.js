@@ -502,7 +502,7 @@ function handleAuth(triggerData) {
 function getAuthHeader(triggerData) {
   const tm = new iam({
     iamApikey: triggerData.apikey,
-    iamUrl: 'https://iam.bluemix.net/identity/token',
+    iamUrl: process.env.__OW_IAM_API_URL || 'https://iam.bluemix.net/identity/token',
   });
   return tm.getAuthHeader();
 }
