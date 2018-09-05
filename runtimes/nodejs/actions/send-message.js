@@ -411,11 +411,11 @@ async function main(params) {
   } else {
     apiHost = 'mobile.ng.bluemix.net';
   }
-  let token;
+  let header;
   let pushHeaders = {};
   if (isIamAuth) {
     try {
-      token = await handleAuth(theParams)
+      header = await handleAuth(theParams)
     } catch (err) {
       return Promise.reject({
         statusCode: 500,
@@ -424,7 +424,7 @@ async function main(params) {
       });
     }
     pushHeaders = {
-      Authorization: `Bearer ${token.bearer}`,
+      Authorization: header,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
@@ -485,13 +485,12 @@ function getParams(theParams) {
   return allParams;
 }
 
-const tokenManagers = {};
 function handleAuth(triggerData) {
   if (triggerData.apikey) {
     return new Promise(((resolve, reject) => {
-      getToken(triggerData)
-        .then((token) => {
-          resolve({ bearer: token });
+      getAuthHeader(triggerData)
+        .then((header) => {
+          resolve(header);
         })
         .catch((err) => {
           reject(err);
@@ -500,13 +499,10 @@ function handleAuth(triggerData) {
   }
 }
 
-function getToken(triggerData) {
-  if (!(triggerData.apikey in tokenManagers)) {
-    const tm = new iam({
-      iamApikey: triggerData.apikey,
-      iamUrl: 'https://iam.bluemix.net/identity/token',
-    });
-    tokenManagers[triggerData.apikey] = tm;
-  }
-  return tokenManagers[triggerData.apikey].getToken();
+function getAuthHeader(triggerData) {
+  const tm = new iam({
+    iamApikey: triggerData.apikey,
+    iamUrl: 'https://iam.bluemix.net/identity/token',
+  });
+  return tm.getAuthHeader();
 }
