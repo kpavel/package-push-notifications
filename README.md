@@ -12,7 +12,7 @@ This package is available in Node.js 8.
 # Deploy Push Notifications Package with IBM Cloud Command Line Interface (CLI)
 
 ## Configure CLI
-- Make sure to execute `bx login` if not already logged in
+- Make sure to execute `ibmcloud login` if not already logged in
 1. Install the Cloud Functions CLI plugin.
 ```
 ibmcloud plugin install cloud-functions
