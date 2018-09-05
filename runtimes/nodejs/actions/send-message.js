@@ -86,13 +86,15 @@
 */
 module.paths.push('/usr/lib/node_modules');
 const url = require('url');
-const request = require('request');
+const { promisify } = require('util');
+const request = promisify(require('request'));
+const iam = require('@ibm-functions/iam-token-manager');
 
-function main(params) {
+async function main(params) {
   const theParams = getParams(params);
-
-  if (!theParams.appId && !theParams.appGuid) {
-    return Promise.reject('appId / appGUID of the application is required.');
+  let isIamAuth = false;
+  if (theParams.apikey) {
+    isIamAuth = true;
   }
 
   const appId = theParams.appGuid || theParams.appId;
@@ -398,36 +400,59 @@ function main(params) {
   }
 
   const bodyData = JSON.stringify(sendMessage);
-  let apiHost;
+  let apiHost = '';
   if (theParams.apiHost) {
     apiHost = theParams.apiHost;
-  }
-  else if (theParams.admin_url) {
+  } else if (theParams.url) {
+    apiHost = url.parse(theParams.url).host;
+  } else if (theParams.admin_url) {
     const adminURL = url.parse(theParams.admin_url).protocol === null ? `https:${theParams.admin_url}` : theParams.admin_url;
     apiHost = url.parse(adminURL).host;
   } else {
     apiHost = 'mobile.ng.bluemix.net';
   }
+  let token;
+  let pushHeaders = {};
+  if (isIamAuth) {
+    try {
+      token = await handleAuth(theParams)
+    } catch (err) {
+      return Promise.reject({
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: { message: 'Error processing your request' },
+      });
+    }
+    pushHeaders = {
+      Authorization: `Bearer ${token.bearer}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+  } else {
+    pushHeaders = {
+      appSecret,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+  }
 
-  const promise = new Promise((resolve, reject) => {
-    request({
+  let sendMessageResult;
+  try {
+    sendMessageResult = await (request({
       method: 'post',
       uri: `https://${apiHost}/imfpush/v1/apps/${appId}/messages`,
-      headers: {
-        appSecret,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: pushHeaders,
       body: bodyData,
-    }, (error, response, body) => {
-      if (error) {
-        reject(error);
-      }
-      const j = JSON.parse(body);
-      resolve(j);
-    });
-  });
-  return promise;
+    }));
+  } catch (err) {
+    return Promise.reject({
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: { message: err },
+    })
+  }
+  const j = JSON.parse(sendMessageResult.body);
+  return j;
 }
 
 function isEmpty(obj) {
@@ -458,4 +483,30 @@ function getParams(theParams) {
   const allParams = Object.assign({}, bxCreds, theParams);
   delete allParams.__bx_creds;
   return allParams;
+}
+
+const tokenManagers = {};
+function handleAuth(triggerData) {
+  if (triggerData.apikey) {
+    return new Promise(((resolve, reject) => {
+      getToken(triggerData)
+        .then((token) => {
+          resolve({ bearer: token });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }));
+  }
+}
+
+function getToken(triggerData) {
+  if (!(triggerData.apikey in tokenManagers)) {
+    const tm = new iam({
+      iamApikey: triggerData.apikey,
+      iamUrl: 'https://iam.bluemix.net/identity/token',
+    });
+    tokenManagers[triggerData.apikey] = tm;
+  }
+  return tokenManagers[triggerData.apikey].getToken();
 }

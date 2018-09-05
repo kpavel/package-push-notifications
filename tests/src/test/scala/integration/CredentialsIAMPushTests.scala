@@ -39,9 +39,9 @@ class CredentialsIAMPushTests
   val iam_serviceid_crn = credentials.get("iam_serviceid_crn");
 
 
-  val messageText = "This is pushnotifications Testing".toJson;
-  val unicodeMessage = "\ue04a".toJson;
-  val accentMessage = "Máxima de 33 C and Mínima de 26 C".toJson;
+  val messageText = JsString("""This is pushnotifications Testing""");
+  val unicodeMessage = JsString("""\ue04a""");
+  val accentMessage = JsString("""Máxima de 33 C and Mínima de 26 C""");
 
   val __bx_creds = JsObject(
    "imfpush" -> JsObject(
@@ -64,22 +64,22 @@ class CredentialsIAMPushTests
 
     it should "Send Notification action" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> messageText, "__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> messageText, "__bx_creds" -> __bx_creds))){
+                 _.response.result.get.toString should include (messageText.convertTo[String])
              }
     }
 
     it should "Send Notification action with unicode message" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> unicodeMessage, "__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> unicodeMessage, "__bx_creds" -> __bx_creds))){
+                 _.response.result.get.toString should include (unicodeMessage.convertTo[String])
              }
     }
 
     it should "Send Notification action with accent message" in {
            val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("text" -> accentMessage,"__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include ("message")
+             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> accentMessage,"__bx_creds" -> __bx_creds))){
+                 _.response.result.get.toString should include (accentMessage.convertTo[String])
              }
     }
 
