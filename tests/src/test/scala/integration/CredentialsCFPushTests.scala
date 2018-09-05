@@ -23,7 +23,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 @RunWith(classOf[JUnitRunner])
-class CredentialsIBMPushTests
+class CredentialsCFPushTests
     extends PushNotificationsPackage
     with TestHelpers
     with WskTestHelpers{
@@ -33,11 +33,11 @@ class CredentialsIBMPushTests
   val adminURL = credentials.get("admin_url");
   val apiHost = adminURL.split("/")(2);
   val appGuid = credentialsUrl.split("/").last.toJson;
-  val url = "www.google.com".toJson;
+  val messageUrl = "www.google.com".toJson;
 
-  val messageText = "This is pushnotifications Testing".toJson;
-  val unicodeMessage = "\ue04a".toJson;
-  val accentMessage = "Máxima de 33 C and Mínima de 26 C".toJson;
+  val messageText = JsString("""This is pushnotifications Testing""");
+  val unicodeMessage = JsString("""\ue04a""");
+  val accentMessage = JsString("""Máxima de 33 C and Mínima de 26 C""");
 
   behavior of "Push Package with CF style Credentials"
 
@@ -48,35 +48,35 @@ class CredentialsIBMPushTests
     it should "Send Notification action" in {
            val name = "push-notifications/send-message"
              withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText))){
-                 _.response.result.get.toString should include (messageText.toString)
+                 _.response.result.get.toString should include (messageText.convertTo[String])
              }
     }
 
     it should "Send Notification action with unicode message" in {
            val name = "push-notifications/send-message"
              withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> unicodeMessage))){
-                 _.response.result.get.toString should include (unicodeMessage.toString)
+                 _.response.result.get.toString should include (unicodeMessage.convertTo[String])
              }
     }
 
     it should "Send Notification action with accent message" in {
            val name = "push-notifications/send-message"
              withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> accentMessage))){
-                 _.response.result.get.toString should include (accentMessage.toString)
+                 _.response.result.get.toString should include (accentMessage.convertTo[String])
              }
     }
 
-    it should "Send Notification action with url" in {
+    it should "Send Notification action with messageUrl" in {
             val name = "push-notifications/send-message"
-            withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "url"-> url))){
-                _.response.result.get.toString should include (messageText.toString)
+            withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "messageUrl"-> messageUrl))){
+                _.response.result.get.toString should include (messageText.convertTo[String])
              }
            }
 
     it should "Send Notification action using admin_url" in {
         val name = "push-notifications/send-message"
         withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> adminURL.toJson))){
-            _.response.result.get.toString should include (messageText.toString)
+            _.response.result.get.toString should include (messageText.convertTo[String])
         }
     }
 
@@ -90,7 +90,7 @@ class CredentialsIBMPushTests
     it should "Send Notification action using apiHost" in {
         val name = "push-notifications/send-message"
         withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> apiHost.toJson))){
-            _.response.result.get.toString should include (messageText.toString)
+            _.response.result.get.toString should include (messageText.convertTo[String])
         }
     }
 

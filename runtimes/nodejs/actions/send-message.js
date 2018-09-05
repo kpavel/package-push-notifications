@@ -86,66 +86,67 @@
 */
 module.paths.push('/usr/lib/node_modules');
 const url = require('url');
-const request = require('request');
+const { promisify } = require('util');
+const request = promisify(require('request'));
+const iam = require('@ibm-functions/iam-token-manager');
 
-function main(params) {
-  if (!params.appId && !params.appGuid) {
-    return Promise.reject('appId / appGUID of the application is required.');
-  }
-  if (!params.appSecret) {
-    return Promise.reject('appSecret of the application is required.');
+async function main(params) {
+  const theParams = getParams(params);
+  let isIamAuth = false;
+  if (theParams.apikey) {
+    isIamAuth = true;
   }
 
-  const appId = params.appGuid || params.appId;
-  const { appSecret } = params;
+  const appId = theParams.appGuid || theParams.appId;
+  const { appSecret } = theParams;
 
   // message section settings
-  const { messageUrl, messageText } = params;
+  const { messageUrl, messageText } = theParams;
 
   // target section settings -- each param should be an array of string
   const {
     targetDeviceIds, targetPlatforms, targetTagNames, targetUserIds,
-  } = params;
+  } = theParams;
 
   // apns settings
   const {
     apnsBadge, apnsCategory, apnsActionKeyTitle, apnsSound, apnsPayload, apnsType, apnsTitleLocKey,
     apnsLocKey, apnsLaunchImage, apnsTitleLocArgs, apnsLocArgs, apnstitle, apnsSubtitle,
     apnsAttachmentUrl,
-  } = params;
+  } = theParams;
 
   // gcm settings
   const {
     gcmCollapseKey, gcmDelayWhileIdle, gcmPayload, gcmPriority, gcmSound, gcmTimeToLive,
     gcmSync, gcmVisibility, gcmCategory, gcmIcon,
-  } = params;
+  } = theParams;
 
   // GCM Style settings
   const {
     gcmStyleType, gcmStyleTitle, gcmStyleUrl, gcmStyleText, gcmStyleLines,
-  } = params;
+  } = theParams;
 
   // GCM Light settings
-  const { gcmLightsLedArgb, gcmLightsLedOnMs, gcmLightsLedOffMs } = params;
+  const { gcmLightsLedArgb, gcmLightsLedOnMs, gcmLightsLedOffMs } = theParams;
 
   // Firefox web settings
   const {
     fireFoxTitle, fireFoxIconUrl, fireFoxTimeToLive, fireFoxPayload,
-  } = params;
+  } = theParams;
 
   // Chrome web settings
   const {
     chromeTitle, chromeIconUrl, chromeTimeToLive, chromePayload,
-  } = params;
+  } = theParams;
 
   // Safari web settings
-  const { safariTitle, safariUrlArgs, safariAction } = params;
+  const { safariTitle, safariUrlArgs, safariAction } = theParams;
 
   // Chrome Apps & Extensions web settings
   const {
     chromeAppExtTitle, chromeAppExtCollapseKey, chromeAppExtDelayWhileIdle,
     chromeAppExtIconUrl, chromeAppExtTimeToLive, chromeAppExtPayload,
-  } = params;
+  } = theParams;
 
   const sendMessage = {};
 
@@ -399,36 +400,65 @@ function main(params) {
   }
 
   const bodyData = JSON.stringify(sendMessage);
-  let apiHost;
-  if (params.apiHost) {
-    apiHost = params.apiHost;
-  }
-  else if (params.admin_url) {
-    const adminURL = url.parse(params.admin_url).protocol === null ? `https:${params.admin_url}` : params.admin_url;
+  let apiHost = '';
+  if (theParams.apiHost) {
+    apiHost = theParams.apiHost;
+  } else if (theParams.url) {
+    apiHost = url.parse(theParams.url).host;
+  } else if (theParams.admin_url) {
+    const adminURL = url.parse(theParams.admin_url).protocol === null ? `https:${theParams.admin_url}` : theParams.admin_url;
     apiHost = url.parse(adminURL).host;
   } else {
     apiHost = 'mobile.ng.bluemix.net';
   }
+  let header;
+  let pushHeaders = {};
+  if (isIamAuth) {
+    try {
+      header = await handleAuth(theParams.apikey)
+    } catch (err) {
+      return Promise.reject({
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: { message: 'Error processing your request' },
+      });
+    }
+    pushHeaders = {
+      Authorization: header,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+  } else {
+    pushHeaders = {
+      appSecret,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+  }
 
-  const promise = new Promise((resolve, reject) => {
-    request({
+  let sendMessageResult;
+  try {
+    sendMessageResult = await (request({
       method: 'post',
       uri: `https://${apiHost}/imfpush/v1/apps/${appId}/messages`,
-      headers: {
-        appSecret,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: pushHeaders,
       body: bodyData,
-    }, (error, response, body) => {
-      if (error) {
-        reject(error);
-      }
-      const j = JSON.parse(body);
-      resolve(j);
-    });
-  });
-  return promise;
+    }));
+  } catch (err) {
+    return Promise.reject({
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: { message: err },
+    })
+  }
+
+  let messageResult;
+  try {
+    messageResult = JSON.parse(sendMessageResult.body);
+  } catch (e) {
+    return Promise.reject(new Error('error parsing send message result'));
+  }
+  return messageResult;
 }
 
 function isEmpty(obj) {
@@ -439,4 +469,44 @@ function isEmpty(obj) {
     if (hasOwnProperty.call(obj, key)) return false;
   }
   return true;
+}
+
+/**
+* Helper function used to authenticate credentials bound to package using wsk service bind
+*
+* @param {Object} theParams - parameters sent to service
+*/
+function getParams(theParams) {
+  const service = 'imfpush';
+  if (Object.keys(theParams).length === 0) {
+    return theParams;
+  }
+  let bxCreds = {};
+  // Code that checks parameters bound using service bind
+  if (theParams.__bx_creds && theParams.__bx_creds[service]) {
+    bxCreds = theParams.__bx_creds[service];
+  }
+  const allParams = Object.assign({}, bxCreds, theParams);
+  delete allParams.__bx_creds;
+  return allParams;
+}
+
+function handleAuth(theApiKey) {
+  return new Promise(((resolve, reject) => {
+    getAuthHeader(theApiKey)
+      .then((header) => {
+        resolve(header);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  }));
+}
+
+function getAuthHeader(iamApiKey) {
+  const tm = new iam({
+    iamApikey: iamApiKey,
+    iamUrl: process.env.__OW_IAM_API_URL || 'https://iam.bluemix.net/identity/token',
+  });
+  return tm.getAuthHeader();
 }
