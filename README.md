@@ -60,9 +60,6 @@ You can also include a URL with the push notification.
 ibmcloud fn action invoke push-notification/send-message -b -p messageText "Let's code something" -p messageUrl "http://developer.ibm.com"
 ```
 
-## CI/CD
-TODO
-
 # Deploy Push Notifications Package with IBM Cloud Console
 TODO
 
