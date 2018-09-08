@@ -40,13 +40,25 @@ This creates a new package `push-notifications` with the following actions:
 </br>The utility `wskdeploy` will be integrated into a new Cloud Functions CLI plugin command `ibmcloud fn deploy`.
 
 ## Bind service credentials
+Ensure you have [created and configured](https://console.bluemix.net/docs/services/mobilepush/push_step_prereq.html) your Push Notifications service on IBM Cloud.
+
 Bind your Push Notifications service instance to the `push-notifications` package. This gives actions in the package access to the Push Notifications service credentials.
 ```
 ibmcloud fn service bind imfpush push-notifications
 ```
 
-## Test
-TODO
+## Try the package
+Send a push notification message using the send-message function.
+
+```
+ibmcloud fn action invoke push-notifications/send-message -b -p messageText "This is a push notification"
+```
+
+You can also include a URL with the push notification.
+
+```
+ibmcloud fn action invoke push-notification/send-message -b -p messageText "Let's code something" -p messageUrl "http://developer.ibm.com"
+```
 
 ## CI/CD
 TODO
