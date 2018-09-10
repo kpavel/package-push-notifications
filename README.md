@@ -57,7 +57,23 @@ ibmcloud fn action invoke push-notifications/send-message -b -p messageText "Thi
 You can also include a URL with the push notification.
 
 ```
-ibmcloud fn action invoke push-notification/send-message -b -p messageText "Let's code something" -p messageUrl "http://developer.ibm.com"
+ibmcloud fn action invoke push-notifications/send-message -b -p messageText "Let's code something" -p messageUrl "http://developer.ibm.com"
+```
+
+If successful, you should see a successful response status, which includes the message and url sent as a part of the result.
+
+```
+"response": {
+    "result": {
+        "message": {
+            "alert": "let's code something",
+            "url": "http://developer.ibm.com"
+        },
+        "messageId": "aNJhg8XX"
+    },
+    "status": "success",
+    "success": true
+}
 ```
 
 # Deploy Push Notifications Package with IBM Cloud Console
