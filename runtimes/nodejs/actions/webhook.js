@@ -21,29 +21,39 @@
  *  @param {string} appGuid - appGuid to create webhook
  *  @param {string} appSecret - appSecret of the application
  *  @param {string} events - list of the events the webhook should fire on
+ *  @param {string} triggerName - the fully qualified name of the trigger to fire on callback
  *  @return {object} whisk async
  */
 const iam = require('@ibm-functions/iam-token-manager');
+const url = require('url');
 const { promisify } = require('util');
 const request = promisify(require('request'));
 
 
 async function main(params) {
   const theParams = getParams(params);
-  console.log('push trigger feed params: ', theParams);
   let isIamAuth = false;
   if (theParams.apikey) {
     isIamAuth = true;
   }
-  const parsedName = parseQName(theParams.triggerName);
+  const parsedName = parseQualifiedName(theParams.triggerName);
   const { trigger, namespace } = parsedName;
   const endpoint = 'openwhisk.ng.bluemix.net';
   // URL of the whisk system. The calls of push service will go here.
   const whiskCallbackUrl = `https://${process.env.__OW_API_KEY}@${endpoint}/api/v1/namespaces/${namespace}/triggers/${trigger}`;
   const appId = theParams.appGuid || theParams.appId;
   const { appSecret } = theParams;
-  // The URL to create the webhook on push service
-  const registrationEndpoint = `https://mobile.ng.bluemix.net/imfpush/v1/apps/${appId}/webhooks`;
+  let apiHost = '';
+  if (theParams.apiHost) {
+    apiHost = theParams.apiHost;
+  } else if (theParams.url) {
+    apiHost = url.parse(theParams.url).host;
+  } else if (theParams.admin_url) {
+    const adminURL = url.parse(theParams.admin_url).protocol === null ? `https:${theParams.admin_url}` : theParams.admin_url;
+    apiHost = url.parse(adminURL).host;
+  } else {
+    apiHost = 'mobile.ng.bluemix.net';
+  }
   const lifecycleEvent = (theParams.lifecycleEvent || 'CREATE').trim().toUpperCase();
 
   let header;
@@ -80,7 +90,7 @@ async function main(params) {
     try {
       postResult = await (request({
         method: 'POST',
-        uri: registrationEndpoint,
+        uri: `https://${apiHost}/imfpush/v1/apps/${appId}/webhooks`,
         body: JSON.stringify(body),
         headers: pushHeaders,
       }));
@@ -97,8 +107,8 @@ async function main(params) {
     try {
       deleteResult = await (request({
         method: 'DELETE',
-        uri: registrationEndpoint,
-        headers: pushHeaders //TODO: delete content-type or accepts?
+        uri: `https://${apiHost}/imfpush/v1/apps/${appId}/webhooks/${trigger}`,
+        headers: pushHeaders,
       }));
     } catch (err) {
       return Promise.reject({
@@ -152,17 +162,17 @@ function getAuthHeader(iamApiKey) {
   return tm.getAuthHeader();
 }
 
-function parseQName(qname) {
+function parseQualifiedName(qname) {
   const parsed = {};
   const delimiter = '/';
   const defaultNamespace = '_';
   if (qname && qname.charAt(0) === delimiter) {
     const parts = qname.split(delimiter);
     parsed.namespace = parts[1];
-    parsed.name = parts.length > 2 ? parts.slice(2).join(delimiter) : '';
+    parsed.trigger = parts.length > 2 ? parts.slice(2).join(delimiter) : '';
   } else {
     parsed.namespace = defaultNamespace;
-    parsed.name = qname;
+    parsed.trigger = qname;
   }
   return parsed;
 }

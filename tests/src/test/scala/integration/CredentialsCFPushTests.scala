@@ -33,11 +33,22 @@ class CredentialsCFPushTests
   val adminURL = credentials.get("admin_url");
   val apiHost = adminURL.split("/")(2);
   val appGuid = credentialsUrl.split("/").last.toJson;
-  val messageUrl = "www.google.com".toJson;
 
+  // action names
+  val sendMessageName = "push-notifications/send-message"
+  val webhookName = "push-notifications/webhook"
+
+  // send-message variables
+  val messageUrl = "www.google.com".toJson;
   val messageText = JsString("""This is pushnotifications Testing""");
   val unicodeMessage = JsString("""\ue04a""");
   val accentMessage = JsString("""Máxima de 33 C and Mínima de 26 C""");
+
+  // webhook variables
+  val myTriggerFQN = JsString("""/guest/myTrigger""");
+  val myTriggerName = "myTrigger"
+  val events = JsString("""onDeviceRegister""");
+  val lifecycleEventDelete = JsString("""DELETE""");
 
   behavior of "Push Package with CF style Credentials"
 
@@ -46,59 +57,69 @@ class CredentialsCFPushTests
     }
 
     it should "Send Notification action" in {
-           val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText))){
-                 _.response.result.get.toString should include (messageText.convertTo[String])
-             }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText))){
+        _.response.result.get.toString should include (messageText.convertTo[String])
+      }
     }
 
     it should "Send Notification action with unicode message" in {
-           val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> unicodeMessage))){
-                 _.response.result.get.toString should include (unicodeMessage.convertTo[String])
-             }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> unicodeMessage))){
+        _.response.result.get.toString should include (unicodeMessage.convertTo[String])
+      }
     }
 
     it should "Send Notification action with accent message" in {
-           val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> accentMessage))){
-                 _.response.result.get.toString should include (accentMessage.convertTo[String])
-             }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> accentMessage))){
+        _.response.result.get.toString should include (accentMessage.convertTo[String])
+      }
     }
 
     it should "Send Notification action with messageUrl" in {
-            val name = "push-notifications/send-message"
-            withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "messageUrl"-> messageUrl))){
-                _.response.result.get.toString should include (messageText.convertTo[String])
-             }
-           }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "messageUrl"-> messageUrl))){
+        _.response.result.get.toString should include (messageText.convertTo[String])
+      }
+    }
 
     it should "Send Notification action using admin_url" in {
-        val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> adminURL.toJson))){
-            _.response.result.get.toString should include (messageText.convertTo[String])
-        }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> adminURL.toJson))){
+        _.response.result.get.toString should include (messageText.convertTo[String])
+      }
     }
 
     it should "Send Notification action using bad admin_url" in {
-        val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> "//mobile.bad.host/pathname".toJson))){
-            _.response.success shouldBe false
-        }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "admin_url"-> "//mobile.bad.host/pathname".toJson))){
+        _.response.success shouldBe false
+      }
     }
 
     it should "Send Notification action using apiHost" in {
-        val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> apiHost.toJson))){
-            _.response.result.get.toString should include (messageText.convertTo[String])
-        }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> apiHost.toJson))){
+        _.response.result.get.toString should include (messageText.convertTo[String])
+      }
     }
 
     it should "Send Notification action using bad apiHost" in {
-        val name = "push-notifications/send-message"
-        withActivation(wsk.activation,wsk.action.invoke(name, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> "mobile.bad.host".toJson))){
-            _.response.success shouldBe false
-        }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "messageText" -> messageText, "apiHost"-> "mobile.bad.host".toJson))){
+        _.response.success shouldBe false
+      }
+    }
+
+    it should "Create a webhook with trigger name" in {
+      withActivation(wsk.activation,wsk.action.invoke(webhookName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "triggerName" -> myTriggerFQN, "events" -> events))){
+        _.response.result.get.toString should include (myTriggerName)
+      }
+    }
+
+    it should "Fail to create a webhook with a trigger name that already exists" in {
+      withActivation(wsk.activation,wsk.action.invoke(webhookName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "triggerName" -> myTriggerFQN, "events" -> events))){
+        _.response.result.get.toString should include ("""The resource 'Webhook' already exists on the server""")
+      }
+    }
+
+    it should "Delete the webhook with trigger name" in {
+      withActivation(wsk.activation,wsk.action.invoke(webhookName, Map("appSecret" -> appSecret, "appGuid" -> appGuid, "triggerName" -> myTriggerFQN, "events" -> events, "lifecycleEvent" -> lifecycleEventDelete))){
+        _.response.result.get.toString should include ("""{"response":""}""")
+      }
     }
 
     it should "Delete nodejs8 push-notifications package and actions" in {
