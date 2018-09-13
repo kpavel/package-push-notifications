@@ -38,7 +38,8 @@ async function main(params) {
   }
   const parsedName = parseQualifiedName(theParams.triggerName);
   const { trigger, namespace } = parsedName;
-  const endpoint = 'openwhisk.ng.bluemix.net';
+  const endpoint = process.env.__OW_API_HOST;
+
   // URL of the whisk system. The calls of push service will go here.
   const whiskCallbackUrl = `https://${process.env.__OW_API_KEY}@${endpoint}/api/v1/namespaces/${namespace}/triggers/${trigger}`;
   const appId = theParams.appGuid || theParams.appId;
