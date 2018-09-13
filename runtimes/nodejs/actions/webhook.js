@@ -32,18 +32,21 @@ const request = promisify(require('request'));
 
 async function main(params) {
   const theParams = getParams(params);
+
+  // check for IAM authentication
   let isIamAuth = false;
   if (theParams.apikey) {
     isIamAuth = true;
   }
   const parsedName = parseQualifiedName(theParams.triggerName);
   const { trigger, namespace } = parsedName;
-  const endpoint = process.env.__OW_API_HOST;
-
-  // URL of the whisk system. The calls of push service will go here.
-  const whiskCallbackUrl = `https://${process.env.__OW_API_KEY}@${endpoint}/api/v1/namespaces/${namespace}/triggers/${trigger}`;
+  const owEndpoint = process.env.__OW_API_HOST;
   const appId = theParams.appGuid || theParams.appId;
   const { appSecret } = theParams;
+  
+  // URL of the whisk system. The calls of push service will go here.
+  const whiskCallbackUrl = `https://${process.env.__OW_API_KEY}@${owEndpoint}/api/v1/namespaces/${namespace}/triggers/${trigger}`;
+
   let apiHost = '';
   if (theParams.apiHost) {
     apiHost = theParams.apiHost;
