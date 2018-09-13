@@ -59,7 +59,6 @@ async function main(params) {
     apiHost = 'mobile.ng.bluemix.net';
   }
   const lifecycleEvent = (theParams.lifecycleEvent || 'CREATE').trim().toUpperCase();
-
   let header;
   let pushHeaders = {};
   if (isIamAuth) {
@@ -113,7 +112,6 @@ async function main(params) {
       return Promise.reject(new Error('error parsing webhook update result'));
     }
     return finalResult;
-
   } if (lifecycleEvent === 'DELETE') {
     let deleteResult;
     try {
@@ -129,14 +127,7 @@ async function main(params) {
         body: { message: err },
       })
     }
-    // parse updateResult and return
-    let finalResult;
-    try {
-      finalResult = JSON.parse(deleteResult.body);
-    } catch (e) {
-      return Promise.reject(new Error('error parsing webhook delete result'));
-    }
-    return finalResult;
+    return { response: deleteResult.body };
   }
   return Promise.reject(new Error('lifecycleEvent must be CREATE, UPDATE, or DELETE'));
 }
