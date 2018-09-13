@@ -43,7 +43,7 @@ async function main(params) {
   const owEndpoint = process.env.__OW_API_HOST;
   const appId = theParams.appGuid || theParams.appId;
   const { appSecret } = theParams;
-  
+
   // URL of the whisk system. The calls of push service will go here.
   const whiskCallbackUrl = `https://${process.env.__OW_API_KEY}@${owEndpoint}/api/v1/namespaces/${namespace}/triggers/${trigger}`;
 
@@ -90,9 +90,9 @@ async function main(params) {
       url: whiskCallbackUrl,
       eventTypes: events,
     };
-    let postResult;
+    let updateResult;
     try {
-      postResult = await (request({
+      updateResult = await (request({
         method: 'POST',
         uri: `https://${apiHost}/imfpush/v1/apps/${appId}/webhooks`,
         body: JSON.stringify(body),
@@ -105,7 +105,15 @@ async function main(params) {
         body: { message: err },
       })
     }
-    return { response: postResult.body };
+    // parse updateResult and return
+    let finalResult;
+    try {
+      finalResult = JSON.parse(updateResult.body);
+    } catch (e) {
+      return Promise.reject(new Error('error parsing webhook update result'));
+    }
+    return finalResult;
+
   } if (lifecycleEvent === 'DELETE') {
     let deleteResult;
     try {
@@ -121,7 +129,14 @@ async function main(params) {
         body: { message: err },
       })
     }
-    return { response: deleteResult.body };
+    // parse updateResult and return
+    let finalResult;
+    try {
+      finalResult = JSON.parse(deleteResult.body);
+    } catch (e) {
+      return Promise.reject(new Error('error parsing webhook delete result'));
+    }
+    return finalResult;
   }
   return Promise.reject(new Error('lifecycleEvent must be CREATE, UPDATE, or DELETE'));
 }
