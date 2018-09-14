@@ -38,11 +38,6 @@ class CredentialsIAMPushTests
   val clientSecret = credentials.get("clientSecret");
   val iam_serviceid_crn = credentials.get("iam_serviceid_crn");
 
-
-  val messageText = JsString("""This is pushnotifications Testing""");
-  val unicodeMessage = JsString("""\ue04a""");
-  val accentMessage = JsString("""Máxima de 33 C and Mínima de 26 C""");
-
   val __bx_creds = JsObject(
    "imfpush" -> JsObject(
      "iam_role_crn" -> JsString(iam_role_crn),
@@ -55,6 +50,20 @@ class CredentialsIAMPushTests
      "clientSecret" -> JsString(clientSecret),
      "iam_serviceid_crn" -> JsString(iam_serviceid_crn)
    ))
+   // action names
+   val sendMessageName = "push-notifications/send-message"
+   val webhookName = "push-notifications/webhook"
+
+   // send message variables
+   val messageText = JsString("""This is pushnotifications Testing""");
+   val unicodeMessage = JsString("""\ue04a""");
+   val accentMessage = JsString("""Máxima de 33 C and Mínima de 26 C""");
+
+   // webhook variables
+   val myTriggerFQN = JsString("""/guest/myTrigger""");
+   val myTriggerName = "myTrigger"
+   val events = JsString("""onDeviceRegister""");
+   val lifecycleEventDelete = JsString("""DELETE""");
 
   behavior of "Push Package with IAM style Credentials"
 
@@ -63,24 +72,39 @@ class CredentialsIAMPushTests
     }
 
     it should "Send Notification action" in {
-           val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> messageText, "__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include (messageText.convertTo[String])
-             }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("messageText" -> messageText, "__bx_creds" -> __bx_creds))){
+        _.response.result.get.toString should include (messageText.convertTo[String])
+      }
     }
 
     it should "Send Notification action with unicode message" in {
-           val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> unicodeMessage, "__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include (unicodeMessage.convertTo[String])
-             }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("messageText" -> unicodeMessage, "__bx_creds" -> __bx_creds))){
+        _.response.result.get.toString should include (unicodeMessage.convertTo[String])
+      }
     }
 
     it should "Send Notification action with accent message" in {
-           val name = "push-notifications/send-message"
-             withActivation(wsk.activation,wsk.action.invoke(name, Map("messageText" -> accentMessage,"__bx_creds" -> __bx_creds))){
-                 _.response.result.get.toString should include (accentMessage.convertTo[String])
-             }
+      withActivation(wsk.activation,wsk.action.invoke(sendMessageName, Map("messageText" -> accentMessage,"__bx_creds" -> __bx_creds))){
+        _.response.result.get.toString should include (accentMessage.convertTo[String])
+      }
+    }
+
+    it should "Create a webhook with trigger name" in {
+      withActivation(wsk.activation,wsk.action.invoke(webhookName, Map("triggerName" -> myTriggerFQN, "events" -> events, "__bx_creds" -> __bx_creds))){
+        _.response.result.get.toString should include (myTriggerName)
+      }
+    }
+
+    it should "Fail to create a webhook with a trigger name that already exists" in {
+      withActivation(wsk.activation,wsk.action.invoke(webhookName, Map("triggerName" -> myTriggerFQN, "events" -> events, "__bx_creds" -> __bx_creds))){
+        _.response.result.get.toString should include ("""The resource 'Webhook' already exists on the server""")
+      }
+    }
+
+    it should "Delete the webhook with trigger name" in {
+      withActivation(wsk.activation,wsk.action.invoke(webhookName, Map("triggerName" -> myTriggerFQN, "events" -> events, "lifecycleEvent" -> lifecycleEventDelete, "__bx_creds" -> __bx_creds))){
+        _.response.result.get.toString should include ("""{"response":""}""")
+      }
     }
 
     it should "Delete nodejs8 push-notifications package and actions" in {

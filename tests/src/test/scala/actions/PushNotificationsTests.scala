@@ -35,7 +35,6 @@ class PushNotificationTests
   // test to create the nodejs 8 Push Notifications package from github url.  Will use preinstalled folder.
   it should "create the nodejs 8 Push Notifications package from github url" in {
     deployNodeJS8
-    // create unique asset names
 
     // ensure actions exist and are of expected kind
     val testActionSendMessage =
