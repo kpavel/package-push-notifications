@@ -1,4 +1,3 @@
-### WIP: DO NOT USE IN PRODUCTION ###
 # package-push-notifications
 [![Build Status](https://travis-ci.org/ibm-functions/package-push-notifications.svg?branch=master)](https://travis-ci.org/ibm-functions/package-push-notifications)
 
