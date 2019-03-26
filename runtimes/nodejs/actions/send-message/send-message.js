@@ -510,3 +510,5 @@ function getAuthHeader(iamApiKey) {
   });
   return tm.getAuthHeader();
 }
+
+exports.main = main;

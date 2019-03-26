@@ -1,0 +1,10 @@
+{
+  "name": "send-message",
+  "version": "1.0.0",
+  "description": "",
+  "main": "send-message.js",
+  "dependencies": {
+    "@ibm-functions/iam-token-manager": "^1.0.3",
+    "request": "^2.88.0"
+  }
+}

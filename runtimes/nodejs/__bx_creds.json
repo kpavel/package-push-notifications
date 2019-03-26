@@ -1,0 +1,15 @@
+{
+  "__bx_creds": {"imfpush": {
+                    "apikey": ""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"",
+                    "appGuid": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                    "clientSecret": ""XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"",
+                    "credentials": "Service credentials-1",
+                    "iam_apikey_description": "Auto generated apikey during resource-key operation for Instance - crn:v1:bluemix:public:imfpush:eu-gb:a/"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"::",
+                    "iam_apikey_name": "auto-generated-apikey-"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"",
+                    "iam_role_crn": "crn:v1:bluemix:public:iam::::role:Administrator",
+                    "iam_serviceid_crn": "crn:v1:bluemix:public:iam-identity::a"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"",
+                    "instance": "Push Notifications-sb",
+                    "plan": "LITE",
+                    "url": "https://imfpush.eu-gb.bluemix.net/imfpush/v1/apps/"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX""
+                }}
+}

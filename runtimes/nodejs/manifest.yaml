@@ -4,7 +4,7 @@ project:
     push-notifications:
       actions:
         send-message:
-          function: actions/send-message.js
+          function: actions/send-message
           runtime: nodejs:8
         webhook:
           function: actions/webhook.js
